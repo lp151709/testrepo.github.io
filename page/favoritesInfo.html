@@ -1,0 +1,157 @@
+<div><a href="javascript:void(0)" id="favorAddBtn"><img src="img/add1.png" style="float: right; width: 30px; height: 30px;" /></a></div>
+
+<div class="coll_list scrllbar01" style="overflow-y: auto; height: 550px;">
+    <ul id="favor_list_div">
+        <li>
+            <div>
+                <a href="javascript:void(0)">
+                    <img src="img/file.png" name="favorNextBtn" />
+                    <input name="dirNameItem" bind="{Name:'nameStr'}"/>
+                    <button class="rename_btn" name="addFavorBtn">保存</button><button class="rename_btn" name="renameFavorBtn">重命名</button><button class="rename_btn dele_btn" name="delFavorBtn">删除</button>
+                </a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div id="pop_delete_favor_list_confirm" class="reveal-modal" style="color: #666">
+    <h1><span style="font-size: 20px; font-weight: bold;">确认删除</span></h1>
+    <br />
+    <p>是否确认将收藏夹除？此操作会将此收藏夹下所有搜藏内容删除</p>
+
+    <input type="hidden" bind="{Name:'id'}" />
+    <button class="rename_btn" id="delete_favor_list_btn" style="display: initial">确认</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<script type="text/javascript">
+    var grid_favor = $("#favor_list_div").ListGrid();
+    grid_favor.AddIndex = true;
+    grid_favor.PreBindRow = function (data){
+        data.nameStr = longString(data.name, 8);
+    }
+
+    grid_favor.AfterBindRow = function (row, data){
+
+        let addFovorBtnItem = $("[name='addFavorBtn']", row);
+        let renameFavorBtnItem = $("[name='renameFavorBtn']", row);
+        let delFavorBtnItem = $("[name='delFavorBtn']", row);
+        let nameTextItem = $("[name='dirNameItem']", row);
+
+        addFovorBtnItem.hide();
+        renameFavorBtnItem.hide();
+        delFavorBtnItem.hide();
+
+        if ("A" == data.buttonType){
+            nameTextItem.removeAttr("readonly");
+            addFovorBtnItem.show();
+        } else if ("D" == data.buttonType){
+
+        } else {
+            nameTextItem.attr("readonly", "readonly")
+            renameFavorBtnItem.show();
+            delFavorBtnItem.show();
+        }
+
+        $("[name='favorNextBtn']", row).click(function () {
+            let itemDocRowItem = grid_favor.FindRowItemByObject(this);
+            setCache("favorites_id", itemDocRowItem.Value.Data.id);
+            setCache("favorites_name", itemDocRowItem.Value.Data.name);
+            gotoPage("collectInfo");
+        });
+
+        addFovorBtnItem.click(function () {
+            let itemDocRowItem = grid_favor.FindRowItemByObject(this);
+            let name_item = $("[name='dirNameItem']", itemDocRowItem.Row);
+            linkTo("favor", {
+                name: name_item.val(),
+                favoritesType: "D"
+            }, "CreateFavorites", function () {
+                search_favor();
+            });
+        });
+
+        renameFavorBtnItem.click(function () {
+            let itemDocRowItem = grid_favor.FindRowItemByObject(this);
+            let name_item = $("[name='dirNameItem']", itemDocRowItem.Row);
+
+            if ("S" == $(this).attr("status")){
+                name_item.attr("readonly", "readonly");
+                // name_item.val(longString(name_item.val(), 8));
+                $(this).attr("status", "R");
+                $(this).text("重命名");
+
+                linkTo("favor", {
+                    favoritesId: itemDocRowItem.Value.Data.id,
+                    name: name_item.val(),
+                    handle: "E"
+                }, "FavoritesHandle", function () {
+                    search_favor();
+                });
+            } else{
+                name_item.removeAttr("readonly");
+                name_item.val(itemDocRowItem.Value.Data.name);
+                name_item.focus();
+                $(this).attr("status", "S");
+                $(this).text("保存");
+            }
+        });
+
+        delFavorBtnItem.click(function () {
+            let itemDocRowItem = grid_favor.FindRowItemByObject(this);
+            $('#pop_delete_favor_list_confirm').reveal({
+                "data-reveal-id": "pop_edit",
+                "data-animation": "fade"
+            });
+            $("#pop_delete_favor_list_confirm").DataBind(itemDocRowItem.Value.Data);
+        });
+    }
+
+    grid_favor.Init();
+
+    function delete_favor_items(favorId) {
+        linkTo("favor", {
+            favoritesId: favorId,
+        }, "DeleteCollectByFavor", function () {
+            search_favor();
+        });
+    }
+
+    function search_favor() {
+        linkTo("favor", {
+            favoritesType: "D"
+        }, "SearchFavorites", function (val) {
+            // val.unshift({
+            //     "id": 0,
+            //     "name": "默认",
+            //     "favoritesType": "D",
+            //     "buttonType": "D"
+            // });
+            grid_favor.DataSource = val;
+            grid_favor.DataBind();
+        });
+    }
+
+    $("#favorAddBtn").click(function () {
+        grid_favor.InsertRow({
+            name: "未命名",
+            favoritesType: "D",
+            buttonType: "A"
+        });
+    });
+
+    $("#delete_favor_list_btn").click(function () {
+        $('#pop_delete_favor_list_confirm').trigger('reveal:close');
+        let del_val = $("#pop_delete_favor_list_confirm").GetData();
+        linkTo("favor", {
+            favoritesId: del_val.id,
+            handle: "D"
+        }, "FavoritesHandle", function () {
+            // search_favor();
+            delete_favor_items(del_val.id);
+        });
+    });
+
+
+    search_favor();
+
+
+</script>

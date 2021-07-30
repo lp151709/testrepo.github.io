@@ -1,0 +1,84 @@
+<div class="mod_tlt blue02"><span style="font-size: 32px;padding-left: 10px;">语料库</span><img id="transfer_details_back_btn" src="img/back2.png" style="width: 20px;height: 20px; float: right" /></div>
+<div style="padding-top: 20px;">
+    <div class="coll_list scrllbar01" style="overflow-y: auto; height: 550px;">
+        <ul id="favor_transfer_div">
+            <li style="min-height: auto;">
+                <div>
+                    <a href="javascript:void(0)" data-reveal-id="pop_transfer_confirm" data-animation="fade" name="favor_transfer_Btn">
+                        <img src="img/file.png" />
+                        <input type="text" bind="{Name:'nameStr'}" readonly="readonly" />
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="pop_transfer_confirm" class="reveal-modal" style="color: #666">
+
+    <h1><span style="font-size: 20px; font-weight: bold;">确认移动</span>></h1>
+    <br />
+    <p>是否确认将语料数据转移到此收藏夹下？</p>
+    <input type="hidden" bind="{Name:'id'}" />
+    <input type="hidden" bind="{Name:'name'}" />
+    <button class="rename_btn" id="transfer_pop_btn" style="display: initial">确认</button>
+    <button class="rename_btn dele_btn" id="transfer_cancel_btn" style="display: initial">取消</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<script type="text/javascript">
+
+    var transfer_item_id = getCache("transfer_id");
+    // var from_id = getCache("from_id");
+
+    var grid_transfer_lang = $("#favor_transfer_div").ListGrid();
+    grid_transfer_lang.AddIndex = true;
+    grid_transfer_lang.PreBindRow = function (data){
+        data.nameStr = longString(data.name, 8);
+    }
+
+    grid_transfer_lang.AfterBindRow = function (row, data){
+        $('a[data-reveal-id]', row).on('click', function(e) {
+            let itemDocRowItem = grid_transfer_lang.FindRowItemByObject(this);
+            e.preventDefault();
+            let modalLocation = $(this).attr('data-reveal-id');
+            $('#'+modalLocation).reveal($(this).data());
+            $("#pop_transfer_confirm").DataBind(itemDocRowItem.Value.Data);
+        });
+    }
+
+    grid_transfer_lang.Init();
+
+    $("#transfer_pop_btn").click(function () {
+        $('#pop_transfer_confirm').trigger('reveal:close');
+        let transfer_data = $("#pop_transfer_confirm").GetData();
+        saveToTransfer(transfer_data);
+    });
+
+    $("#transfer_cancel_btn").click(function () {
+        $('#pop_transfer_confirm').trigger('reveal:close');
+        gotoPage("langDetailsInfo");
+    });
+
+    $("#transfer_details_back_btn").click(function () {
+        gotoPage("langDetailsInfo");
+    });
+
+    linkTo("favor", {
+        favoritesType:"A"
+    }, "SearchFavorites", function (val) {
+        grid_transfer_lang.DataSource = val;
+        grid_transfer_lang.DataBind();
+    });
+
+    function saveToTransfer(data) {
+        linkTo("lang", {
+            // from: from_id,
+            ids: transfer_item_id,
+            favoritesId: data.id,
+            favoritesName: data.name
+        }, "TransferLanguage", function (val) {
+            gotoPage("langDetailsInfo");
+        });
+    }
+
+
+</script>

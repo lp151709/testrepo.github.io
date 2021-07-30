@@ -1,0 +1,120 @@
+<link rel="stylesheet" href="css/drag.css">
+<div class="mod_tlt blue02"><i class="iconfont iconprefer"></i>检索设置</div>
+<div style="width: 100%; height: 500px">
+    <div style="margin: 10px;font-size: medium">
+        <div class="boxline" style="margin-top: 5px;"></div>
+        <div style="margin: 10px; color: #666">
+            <div id="setting_display_div">
+                <div style="padding-bottom: 10px;">
+                    <table width="100%">
+                        <tr>
+                            <td style="width: 200px; text-align: right">
+                                <span>检索框提示：</span>
+                            </td>
+                            <td  style="width: 300px;">
+                                <span style="color: #9c9c9c">是否希望在检索时显示检索框提示</span>
+                            </td>
+                            <td>
+                                <div style="width: 100px;">
+<!--                                    <input type="checkbox" style="display: initial" id="search_message_input" class="cb-item_input" bind="{Name:'retrieval.display'}" selectvalue="{Yes:'Y',No:'N'}">-->
+                                    <div class="cb-item_android-style">
+                                        <input type="checkbox" id="search_message_input" class="cb-item_input" bind="{Name:'retrieval.display'}" selectvalue="{Yes:'Y',No:'N'}">
+                                        <label for="search_message_input" class="cb-item_label">
+                                            <span class="cb-item_marker"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div style="padding-bottom: 10px;">
+                    <table width="100%">
+                        <tr>
+                            <td style="width: 200px; text-align: right">
+                                <span>检索历史记录：</span>
+                            </td>
+                            <td style="width: 300px;">
+                                <span style="color: #9c9c9c">是否希望在检索时显示检索历史</span>
+                            </td>
+                            <td>
+                                <div>
+<!--                                    <input style="display: initial"  type="checkbox" id="search_history_input" class="cb-item_input" bind="{Name:'history.display'}" selectvalue="{Yes:'Y',No:'N'}">-->
+                                    <div class="cb-item_android-style">
+                                        <input type="checkbox" id="search_history_input" class="cb-item_input" bind="{Name:'history.display'}" selectvalue="{Yes:'Y',No:'N'}">
+                                        <label for="search_history_input" class="cb-item_label">
+                                            <span class="cb-item_marker"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="padding-bottom: 10px;padding-top: 5px;">
+                <table width="100%">
+                    <tr>
+                        <td style="width: 200px; text-align: right">
+                            <span>检索结果显示顺序：</span>
+                        </td>
+                        <td style="width: 300px;">
+                            <span style="color: #9c9c9c">设置您可以看到的资源检索显示顺序</span>
+                        </td>
+                        <td>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td style="padding-top: 20px;" colspan="2">
+                            <div class="table20" style="background-color: white;vertical-align: middle;color: #666;padding: 5px 5px 20px 20px; width: 500px; height: 300px; ">
+                                <ul id="setting_list_grid">
+                                    <li class="tablemove">
+                                        <input type="hidden" bind="{Name:'orderCode'}" />
+                                        <span bind="{Name:'orderName', BindType:'innerText'}" style="font-size: 25px; line-height: 40px;"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="padding-top: 50px; text-align: center">
+            <button class="rename_btn" id="save_setting_btn" style="display: initial">保存</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/jquery.binding.js"></script>
+<script type="text/javascript" src="js/Sortable.min.js"></script>
+<script type="text/javascript">
+    var grid_setting_list = $("#setting_list_grid").ListGrid();
+    grid_setting_list.AddIndex = true;
+    // grid_setting_list.AllowDrop = true;
+    // grid_setting_list.MouseoverStyle = "tablemove1";
+    grid_setting_list.Init();
+
+    linkTo("setting", {}, "SearchSetting", function (val) {
+        if (val.length > 0){
+            grid_setting_list.DataSource = val[0].orders;
+            grid_setting_list.DataBind();
+            $("#setting_display_div").DataBind(val[0]);
+
+            var foo = document.getElementById("setting_list_grid");
+            Sortable.create(foo, { group: "omega" });
+        }
+    });
+
+    $("#save_setting_btn").click(function () {
+        var save_item = $("#setting_display_div").GetData();
+        var select_order = grid_setting_list.GetActualShowList();
+        save_item.orders = select_order;
+
+        linkTo("setting", save_item, "SettingHandle", function () {
+            show_message("保存成功！")
+        });
+    });
+
+
+</script>

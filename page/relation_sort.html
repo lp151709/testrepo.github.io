@@ -1,0 +1,196 @@
+<div class="figure_sort">
+    <!--    class="active3 active1"-->
+    <ul id="select_loves_ul">
+        <li onclick="loveTypeClick(this)" ondblclick="loveTypeClickX(this)" get="active1" left="lite_info01"><a href="javascript:void(0)"
+                class="iconfont iconsort01"></a></li>
+        <li onclick="loveTypeClick(this)" ondblclick="loveTypeClickX(this)" get="active2" left="lite_info02"><a href="javascript:void(0)"
+                class="iconfont iconsort02"></a></li>
+        <li onclick="loveTypeClick(this)" ondblclick="loveTypeClickX(this)" get="active3" left="lite_info03"><a href="javascript:void(0)"
+                class="iconfont iconsort03"></a></li>
+        <li onclick="loveTypeClick(this)" ondblclick="loveTypeClickX(this)" get="active4" left="lite_info04"><a href="javascript:void(0)"
+                class="iconfont iconsort04"></a></li>
+        <li onclick="loveTypeClick(this)" ondblclick="loveTypeClickX(this)" get="active5" left="lite_info05"><a href="javascript:void(0)"
+                class="iconfont iconsort05"></a></li>
+    </ul>
+    <div class="lite_info" id="loves_select_content">
+        <h1>人物</h1>
+        <div class="lite_sel">
+            <div class="RadioStyle" id="loves_list_div">
+                <div class="Block PaddingL" bind="{Name:'persons', BindType:'checkbox', DataType:'array'}">
+                    <input type="checkbox" checked id="love1" value="伴侣" class="blue" />
+                    <label for="love1">伴侣</label>
+                    <input type="checkbox" checked id="love2" value="共事" />
+                    <label for="love2">共事</label>
+                    <input type="checkbox" checked id="love3" value="父母" class="blue" />
+                    <label for="love3">父母</label>
+                    <input type="checkbox" checked id="love4" value="合作" />
+                    <label for="love4">合作</label>
+                    <input type="checkbox" checked id="love5" value="子女" class="blue" />
+                    <label for="love5">子女</label>
+                    <input type="checkbox" checked id="love7" value="朋友" class="blue" />
+                    <label for="love7">朋友</label>
+                    <input type="checkbox" checked id="love9" value="同乡" class="green" />
+                    <label for="love9">同乡</label>
+                    <input type="checkbox" checked id="love10" value="同一共同体" class="skyblue" />
+                    <label for="love10">同一共同体</label>
+                    <input type="checkbox" checked id="love11" value="共同求学" class="green" />
+                    <label for="love11">共同求学</label>
+                    <input type="checkbox" checked id="love23" value="其他" class="blue" />
+                    <label for="love23">其他</label>
+                </div>
+            </div>
+            <div class="RadioStyle" id="doc_select_div" bind="{Name:'edits', BindType:'checkbox', DataType:'array'}">
+                <div class="Block PaddingL">
+                    <input type="checkbox" checked value="供稿" id="love12" />
+                    <label for="love12">供稿</label>
+                    <input type="checkbox" checked value="主编/主笔" id="love13" />
+                    <label for="love13">主编/主笔</label>
+                    <input type="checkbox" checked value="编辑" id="love14" />
+                    <label for="love14">编辑</label>
+                    <input type="checkbox" checked value="创办" id="love15" />
+                    <label for="love15">创办</label>
+                    <input type="checkbox" checked value="撰写" id="love16" />
+                    <label for="love16">撰写</label>
+                    <input type="checkbox" checked value="评价" id="love17" />
+                    <label for="love17">评价</label>
+                    <input type="checkbox" checked value="其他责任者" id="love22" />
+                    <label for="love22">其他责任者</label>
+                </div>
+            </div>
+
+            <div class="RadioStyle" id="doc_org_div" bind="{Name:'edits', BindType:'checkbox', DataType:'array'}">
+                <div class="Block PaddingL">
+                    <input type="checkbox" checked value="属于" class="skyblue" id="love18" />
+                    <label for="love18">属于</label>
+                </div>
+            </div>
+
+            <div class="RadioStyle" id="doc_location_div" bind="{Name:'edits', BindType:'checkbox', DataType:'array'}">
+                <div class="Block PaddingL">
+                    <input type="checkbox" checked value="籍贯" class="green" id="love19" />
+                    <label for="love19">籍贯</label>
+                </div>
+                <div class="Block PaddingL">
+                    <input type="checkbox" checked value="留学" class="green" id="love20" />
+                    <label for="love20">留学</label>
+                </div>
+            </div>
+
+            <div class="RadioStyle" id="doc_event_div" bind="{Name:'edits', BindType:'checkbox', DataType:'array'}">
+                <div class="Block PaddingL">
+                    <input type="checkbox" checked value="参与" class="pink" id="love21" />
+                    <label for="love21">参与</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/input.js"></script>
+<script type="text/javascript">
+    var loves_item = $("#loves_select_content");
+    var loves_select_item = $("li", $("#select_loves_ul"));
+
+    $(loves_select_item[0]).click();
+
+    function loveTypeClickX(e){
+        loveTypeClick(e);
+        var get = $(e).attr("get");
+        switch (get) {
+            case "active1":
+                if($("#loves_list_div input:checked").length>0){
+                    $("#loves_list_div input").prop('checked', false);
+                }
+                else{
+                    $("#loves_list_div input").prop("checked", true);
+                }
+                break;
+            case "active2":
+               if($("#doc_location_div input:checked").length>0){
+                    $("#doc_location_div input").prop('checked', false);
+                }
+                else{
+                    $("#doc_location_div input").prop("checked",true);
+                }
+                break;
+            case "active3":
+                if($("#doc_select_div input:checked").length>0){
+                    $("#doc_select_div input").prop('checked', false);
+                }
+                else{
+                    $("#doc_select_div input").prop("checked",true);
+                }
+                break;
+            case "active4":
+                if($("#doc_event_div input:checked").length>0){
+                    $("#doc_event_div input").prop('checked', false);
+                }
+                else{
+                    $("#doc_event_div input").prop("checked",true);
+                }    
+                break;
+            case "active5":
+                if($("#doc_org_div input:checked").length>0){
+                    $("#doc_org_div input").prop('checked', false);
+                }
+                else{
+                    $("#doc_org_div input").prop("checked",true);
+                }    
+                break;
+        }
+        filter();
+    }
+
+    function loveTypeClick(e) {
+        $("#loves_list_div").hide();
+        $("#doc_select_div").hide();
+        $("#doc_org_div").hide();
+        $("#doc_location_div").hide();
+        $("#doc_event_div").hide();
+
+        var left = $(e).attr("left");
+        loves_item.removeClass("lite_info01");
+        loves_item.removeClass("lite_info02");
+        loves_item.removeClass("lite_info03");
+        loves_item.removeClass("lite_info04");
+        loves_item.removeClass("lite_info05");
+
+        var get = $(e).attr("get");
+        loves_select_item.removeClass("active1");
+        loves_select_item.removeClass("active2");
+        loves_select_item.removeClass("active3");
+        loves_select_item.removeClass("active4");
+        loves_select_item.removeClass("active5");
+
+        $(e).addClass(get);
+        loves_item.addClass(left);
+
+        // var active1 = ["1", "3", "5", "7"];
+        // var active2 = ["9", "11"];
+        // var active3 = ["2", "4", "6"];
+        // var active4 = ["8"];
+        // var active5 = ["10"];
+        console.log(get);
+        switch (get) {
+            case "active1":
+                $("#loves_list_div").show();
+                $("#loves_select_content h1").html("人物");
+                break;
+            case "active2":
+                $("#doc_location_div").show();
+                $("#loves_select_content h1").html("地点");
+                break;
+            case "active3":
+                $("#doc_select_div").show();
+                $("#loves_select_content h1").html("文献");
+                break;
+            case "active4":
+                $("#doc_event_div").show();
+                $("#loves_select_content h1").html("事件");
+                break;
+            case "active5":
+                $("#doc_org_div").show();
+                $("#loves_select_content h1").html("共同体");
+                break;
+        }
+    }
+</script>

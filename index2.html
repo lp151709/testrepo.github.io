@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div style="height: 50px">这是一个测试页面，下面是iframe</div>
+<iframe style="overflow: hidden; width: 100%; border: 0px;" scrolling="no" id="if_content"></iframe>
+<script type="text/javascript" src="js/commonjs/jquery-3.4.1.js"></script>
+<script type="text/javascript" src="js/commonjs/ajaxfileupload.js"></script>
+<script type="text/javascript" src="js/nav.js"></script>
+<script type="text/javascript" src="js/commonjs/jquery.cookie.js"></script>
+<script type="text/javascript" src="js/commonjs/jquery.json-2.2.js"></script>
+<script type="text/javascript" src="js/commonjs/global.js"></script>
+<script type="text/javascript" src="js/commonjs/ajax-link.js"></script>
+<script type="text/javascript" src="js/link-url.js"></script>
+<script type="text/javascript" src="js/commonjs/binding.js"></script>
+<script type="text/javascript" src="js/commonjs/webgrid.js"></script>
+<script type="text/javascript" src="js/commonjs/listgrid.js"></script>
+<script type="text/javascript" src="js/commonjs/jqueryext.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script>
+    let iframe = document.getElementById("if_content");
+    let token_val = $.getQueryString("token");
+    $(iframe).attr("src", "index.html?token="+token_val);
+    window.setInterval(function () {
+        let iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+        iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
+    }, 200);
+</script>
+</body>
+</html>

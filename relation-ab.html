@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>A->B路径——历史人文大数据平台</title>
+</head>
+<!--<link rel="stylesheet" type="text/css" href="http://www.jq22.com/jquery/font-awesome.4.6.0.css">-->
+<link rel="stylesheet" href="css/iconfont.css">
+<link rel="stylesheet" href="css/toast.css">
+<link rel="stylesheet" href="css/relation.css" />
+
+<body>
+    <div class="wrapper">        
+        <div class="atlas_left" id="xcontainer"></div>
+        <div class="atlas_right" id="relation_content_div">
+            <page goto="relation_info"></page>
+            <page goto="relation_sort"></page>
+        </div>
+    </div>
+</body>
+<script src="js/commonjs/jquery-3.4.1.js"></script>
+<script type="text/javascript" src="js/nav.js"></script>
+<script type="text/javascript" src="js/commonjs/jquery.cookie.js"></script>
+<script type="text/javascript" src="js/commonjs/jquery.json-2.2.js"></script>
+<script type="text/javascript" src="js/commonjs/global.js"></script>
+<script type="text/javascript" src="js/commonjs/ajax-link.js"></script>
+<script type="text/javascript" src="js/link-url.js"></script>
+<script type="text/javascript" src="js/underscore-min.js"></script>
+<script type="text/javascript" src="js/commonjs/binding.js"></script>
+<script type="text/javascript" src="js/commonjs/webgrid.js"></script>
+<script type="text/javascript" src="js/commonjs/listgrid.js"></script>
+<script type="text/javascript" src="js/commonjs/jqueryext.js"></script>
+<script type="text/javascript" src="js/toast.js"></script>
+<script src="js/g6.4.min.js"></script>
+<script src="js/kg-g6.js"></script>
+<script src="js/sns-app.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript">
+    baseContent = $("#relation_content_div");
+
+    if(readToken()!==null && readToken()!=="null"){
+        checkLogin(function () {
+            $("#user_show_name").text(loginInfo.userName);
+            $("#userInfo").show();
+            $("#logout_btn").click(function () {
+                logout();
+            });
+        });
+    }
+    else {
+        $("#nouser").show();
+        $("#userInfo").hide();
+    }
+
+</script>
+
+</html>

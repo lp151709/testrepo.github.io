@@ -1,0 +1,89 @@
+<div class="mod_tlt blue02">图像专辑</div>
+<div style="padding-top: 10px;">
+    <div>
+        <div class="srh_box" style="margin-top: 0px; float: right;">
+            <input class="srh_inp" style="width: 200px; height: 25px;" id ="search_image_album_txt"><a href="javascript:void(0)" id="search_image_album_btn" class="srh_btn" style="top: 4px; right: 15px;"><i class="iconfont iconsrh" style="font-size: 17px;"></i></a>
+        </div>
+    </div>
+</div>
+<div style="padding-top: 30px;">
+    <table class="table14_1" id="album_table_div" style="color: #666; width: 100%">
+        <thead>
+        <tr>
+            <td>
+                专辑名称
+            </td>
+<!--            <td>-->
+<!--                图像名称-->
+<!--            </td>-->
+            <td>
+                标注内容
+            </td>
+            <td width="120px;">
+
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td bind="{Name:'name', BindType:'innerText'}">
+            </td>
+<!--            <td bind="{Name:'imageName', BindType:'innerText'}">-->
+<!--            </td>-->
+            <td bind="{Name:'content', BindType:'innerText'}">
+            </td>
+            <td>
+                <a bind="{Name:'url', BindType:'href'}" target="_blank">详情</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div style="text-align: center;padding-top: 30px;">
+    <div class="my-page mark_page"></div>
+</div>
+<script type="text/javascript">
+
+    var page_mark_size = 10;
+
+    var grid_mark_table = $("#album_table_div").Grid();
+    grid_mark_table.AddIndex = true;
+    grid_mark_table.Init();
+
+    function init_page(row_count){
+        myPageInit({
+            pages: row_count,
+            currentPage: 1,
+            element: '.mark_page',
+            callback: function(page) {
+                search_message(page-1);
+            }
+        });
+    }
+
+    function search_message(pageNum, func){
+        let search_val = $("#search_image_album_txt").val();
+        linkTo("analyse", {
+            name: Global.IsNull(search_val) ? null : Global.StringFormat("%{0}%", [search_val]),
+            contentType: "图像专辑",
+            pageEntity:{
+                pageNumber: pageNum,
+                pageSize: page_mark_size
+            }
+        }, "SearchAnalyse", function (val) {
+            grid_mark_table.DataSource = val.rows;
+            grid_mark_table.DataBind();
+            if (func){
+                let page_val = val.count <= page_mark_size ? 0 : parseInt(val.count / page_mark_size) + (val.count % page_mark_size > 0 ? 1 : 0)
+                func(page_val);
+            }
+        });
+    }
+
+    $("#search_image_album_btn").click(function () {
+        search_message(0, init_page);
+    });
+
+    search_message(0, init_page);
+
+</script>

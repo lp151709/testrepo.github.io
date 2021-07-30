@@ -1,0 +1,19 @@
+.triangle {
+    display: inline-block;
+    border-top: 8px solid #000;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    cursor: pointer;
+}
+
+.triangle-rotate-1 {
+    transform-origin:center center;
+    transform: rotate(180deg);
+    transition: .3s;
+}
+
+.triangle-rotate-2 {
+    transform-origin:center center;
+    transform: rotate(0deg);
+    transition: .3s;
+}

@@ -1,0 +1,320 @@
+<div class="mod_tlt blue02"><span id="favor_name_title" style="font-size: 32px; padding-left: 10px"></span><img id="lang_details_back_btn" src="img/back2.png" style="width: 20px;height: 20px; float: right" /></div>
+<div style="padding-top: 10px;">
+    <div>
+        <a href="javascript:void(0)" id="lang_add_btn" tooltip="添加" flow="up"><img src="img/add7.png" style="width: 25px; height: 25px;" /></a>
+        <a href="javascript:void(0)" id="batch_transfer_btn" tooltip="转移" flow="up"><img src="img/fenxi5.png" style="width: 25px; height: 25px;" /></a>
+        <a href="javascript:void(0)" id="lang_analyse_btn" tooltip="分析" flow="up"><img src="img/fenxi4.png" style="width: 25px; height: 25px;" /></a>
+        <in id="upload_content"><a href="javascript:void(0)" id="upload_lang_btn" tooltip="上传" flow="up"><img src="img/shangchuan2.png" style="width: 25px; height: 25px;" /></a> <a href="file/模板.xlsx" style="vertical-align: text-top; font-size: 10px;" target="_blank">模板</a></in>
+        <input type="file" id="upload_lang_file" style="display: none;" />
+        <div class="srh_box" style="margin-top: 0px; float: right;">
+            <input class="srh_inp" style="width: 200px; height: 25px;" id ="search_lang_details_txt"><a href="javascript:void(0)" id="search_lang_details_btn" class="srh_btn" style="top: 4px; right: 15px;"><i class="iconfont iconsrh" style="font-size: 17px;"></i></a>
+        </div>
+    </div>
+</div>
+<div style="padding-top: 5px;">
+    <table class="table14_1" id="favor_lang_list_div" style="color: #666; width: 100%">
+        <thead>
+            <tr>
+                <td sort="title">
+                    <a href="javascript:void(0)">语料名</a>
+                </td>
+                <td sort="favoritesId">
+                    <a href="javascript:void(0)">语料库名</a>
+                </td>
+                <td sort="languageStatus">
+                    <a href="javascript:void(0)">状态</a>
+                </td>
+                <td sort="uploadDate">
+                    <a href="javascript:void(0)">上传时间</a>
+                </td>
+                <td width="120px;">
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <a href="javascript:void(0)" bind="{Name:'title', BindType:'innerText'}" name="title_btn" style="color: #666"></a>
+                </td>
+                <td bind="{Name:'favoritesName', BindType:'innerText'}">
+                </td>
+                <td bind="{Name:'statusStr', BindType:'innerText'}">
+                </td>
+                <td bind="{Name:'uploadDateStr', BindType:'innerText'}">
+                </td>
+                <td>
+                    <a href="javascript:void(0)" name="transfer_btn" tooltip="转移" flow="up"><img src="img/zhuanyi1.png" style="width: 15px; height: 15px;padding-left: 5px;" /></a>
+                    <a href="javascript:void(0)" name="lang_detail_del_btn" tooltip="删除" flow="up"><img src="img/del3.png" style="width: 15px; height: 15px;padding-left: 5px;" /></a>
+                    <a href="javascript:void(0)" data-reveal-id="pop_edit" tooltip="重命名" flow="up" data-animation="fade" name="pop_edit_btn"><img src="img/rename1.png" style="width: 15px; height: 15px;padding-left: 5px;" /></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div style="text-align: center;padding-top: 30px;">
+    <div class="my-page lang_page"></div>
+</div>
+<div id="pop_edit" class="reveal-modal" style="color: #666; font-size: 20px;">
+    <div style="padding-top: 20px;">
+        <span style="vertical-align: top;">语料名</span> <input type="text" bind="{Name:'title'}" style="height: 25px;width: 400px;" />
+    </div>
+    <div style="padding-top: 20px;">
+        <span style="vertical-align: top;">语料值（字符限制：100000）</span> <textarea rows="15" maxlength="100000" bind="{Name:'remark'}" style="width: 550px;"></textarea>
+    </div>
+    <div style="padding-top: 20px;">
+        <button class="rename_btn" id="rename_pop_btn" style="display: initial">保存</button>
+    </div>
+    <input type="hidden" bind="{Name:'id'}"/>
+    <input type="hidden" bind="{Name:'handle'}"/>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<div id="pop_delete_confirm" class="reveal-modal" style="color: #666">
+    <h1><span style="font-size: 20px; font-weight: bold;">确认删除</span></h1>
+    <br />
+    <p>是否确认将语料数据删除？</p>
+
+    <input type="hidden" bind="{Name:'id'}" />
+    <button class="rename_btn" id="delete_pop_btn" style="display: initial">确认</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<div id="pop_lang_content" class="reveal-modal" style="color: #666; height: 500px; overflow-x: auto;">
+    <span bind="{Name:'remarkStr', BindType:'innerHTML'}"></span>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<script type="text/javascript" src="js/jquery.reveal.js"></script>
+<script type="text/javascript">
+
+    var page_size_lang = 10;
+    var curr_page = 1;
+    var now_order_string;
+    var now_order_type;
+    var lang_favor_type = getCache("lang_favor_type");
+
+    var grid_favor_lang_list = $("#favor_lang_list_div").Grid();
+    grid_favor_lang_list.AddIndex = false;
+    grid_favor_lang_list.KeyName = "id";
+    grid_favor_lang_list.ShowChecked = true;
+    grid_favor_lang_list.Sort = true;
+
+    $("#lang_add_btn").show();
+    // $("#batch_transfer_btn").hide();
+    $("#upload_content").show();
+    $("[name='pop_edit_btn']").show();
+    $("[name='lang_detail_del_btn']").show();
+    // $("[name='transfer_btn']").hide();
+
+    if (Global.IsNull(getCache("lang_favor_id")) || 0 == getCache("lang_favor_id")) {
+        $("#upload_content").hide();
+        $("#lang_add_btn").hide();
+    } else {
+        // $("#upload_content").hide();
+        // $("#batch_transfer_btn").show();
+        // $("#lang_add_btn").hide();
+    }
+
+    grid_favor_lang_list.SortEvent = function(name, type) {
+        now_order_string = name;
+        now_order_type = type;
+        search_lang(0, init_page);
+    }
+
+    grid_favor_lang_list.PreBindRow = function (data){
+        // data.favoritesName =  getCache("lang_favor_name");
+        data.statusStr = "Y" == data.languageStatus ? "已标注" : "未标注";
+        data.uploadDateStr = data.uploadDate ? Global.GetFormatDate(data.uploadDate, "yyyy-MM-dd") : "";
+    }
+
+    grid_favor_lang_list.AfterBindRow = function (row, data){
+        let reveal_btn = $('a[data-reveal-id]', row);
+        reveal_btn.click(function(e) {
+            let itemDocRowItem = grid_favor_lang_list.FindRowItemByObject(this);
+        	$('#pop_edit').reveal({
+                "data-reveal-id": "pop_edit",
+                "data-animation": "fade"
+            });
+            itemDocRowItem.Value.Data.handle = "E";
+        	$("#pop_edit").DataBind(itemDocRowItem.Value.Data);
+        });
+
+        if (0 == data.favoritesId) {
+            $("[name='pop_edit_btn']", row).hide();
+            $("[name='lang_detail_del_btn']", row).hide();
+            $("[name='transfer_btn']", row).show();
+
+            reveal_btn.hide();
+        }
+
+        $("[name='lang_detail_del_btn']", row).click(function () {
+            let itemDocRowItem = grid_favor_lang_list.FindRowItemByObject(this);
+            $('#pop_delete_confirm').reveal({
+                "data-reveal-id": "pop_edit",
+                "data-animation": "fade"
+            });
+            $("#pop_delete_confirm").DataBind(itemDocRowItem.Value.Data);
+        });
+
+        $("[name='title_btn']", row).click(function () {
+            let itemDocRowItem = grid_favor_lang_list.FindRowItemByObject(this);
+            let doc = {
+                remarkStr: itemDocRowItem.Value.Data.remark.replace(/\n/g,"<br/>")
+            }
+
+            $("#pop_lang_content").reveal({
+                "data-reveal-id": "pop_lang_content",
+                "data-animation": "fade"
+            });
+            $("#pop_lang_content").DataBind(doc);
+        });
+
+        $("[name='transfer_btn']", row).click(function () {
+            let itemDocRowItem = grid_favor_lang_list.FindRowItemByObject(this);
+            setCache("transfer_id", [itemDocRowItem.Value.Data.id]);
+            // setCache("from_id", itemDocRowItem.Value.Data.favoritesId);
+            gotoPage("transferInfo");
+        });
+    }
+
+    $("#lang_add_btn").click(function () {
+        $('#pop_edit').reveal({
+            "data-reveal-id": "pop_edit",
+            "data-animation": "fade"
+        });
+        let v = {
+            handle: "A"
+        };
+        $("#pop_edit").DataBind(v);
+    });
+
+    $("#delete_pop_btn").click(function () {
+        $('#pop_delete_confirm').trigger('reveal:close');
+        let del_val = $("#pop_delete_confirm").GetData();
+        linkTo("lang", {
+            id: del_val.id,
+            handle: "D"
+        }, "PrivateLanguageHandle", function (val) {
+            search_lang(0, init_page);
+        });
+    });
+
+    grid_favor_lang_list.Init();
+
+    $("#favor_name_title").text(getCache("lang_favor_name"));
+    $("#lang_details_back_btn").click(function () {
+        gotoPage("langFavorInfo");
+    });
+
+    $("#batch_transfer_btn").click(function () {
+        let select_items = grid_favor_lang_list.GetCheckBoxSelectList(true);
+        if (select_items && select_items.length > 0){
+            let id_list = [];
+            for (let i=0;i<select_items.length;i++){
+                id_list.push(select_items[i].id);
+                // setCache("from_id", select_items[i].favoritesId);
+            }
+
+            setCache("transfer_id", id_list);
+            gotoPage("transferInfo");
+        }
+    });
+
+    $("#lang_analyse_btn").click(function () {
+        let select_items = grid_favor_lang_list.GetCheckBoxSelectList(true);
+        if (select_items && select_items.length > 0) {
+            let pub = [];
+            let personal = [];
+            $.each(select_items, function (i, it) {
+                if ("N" == it.languageType) {
+                    personal.push(it.id);
+                } else {
+                    pub.push(encodeURIComponent(it.uri));
+                }
+            });
+
+            let uri = Global.StringFormat("{0}/textAnalysis?public={1}&personal={2}&token={3}&from={4}", [webBk, pub.join(), personal.join(), token, getCache("lang_show_type")]);
+            window.open(uri);
+
+            grid_favor_lang_list.Clear();
+            search_lang(0, init_page);
+        }
+    });
+
+    $("#rename_pop_btn").click(function () {
+        $('#pop_edit').trigger('reveal:close');
+        let edit_data_lang = $("#pop_edit").GetData();
+        if ("A" == edit_data_lang.handle) {
+            linkTo("lang", {
+                id: edit_data_lang.id,
+                title: edit_data_lang.title,
+                remark: edit_data_lang.remark,
+                favoritesId: getCache("lang_favor_id"),
+                favoritesName: getCache("lang_favor_name")
+            }, "CreatePrivateLanguage", function (val) {
+                show_message("保存成功！");
+                search_lang(0, init_page);
+            });
+        } else {
+            linkTo("lang", {
+                id: edit_data_lang.id,
+                title: edit_data_lang.title,
+                remark: edit_data_lang.remark,
+                handle: edit_data_lang.handle
+            }, "PrivateLanguageHandle", function (val) {
+                show_message("保存成功！");
+                search_lang(0, init_page);
+            });
+        }
+    });
+
+    $("#upload_lang_file").change(function () {
+        uploadTo({
+            uploadType: "LANG_FILE_UPLOAD",
+            favoritesId: getCache("lang_favor_id"),
+            favoritesName: getCache("lang_favor_name")
+        }, "upload_lang_file", "UploadLang", function (val) {
+            search_lang(0, init_page);
+        });
+    });
+
+    $("#upload_lang_btn").click(function () {
+        $("#upload_lang_file").click();
+    });
+
+    $("#search_lang_details_btn").click(function () {
+        search_lang(0, init_page);
+    });
+
+    function init_page(row_count){
+        myPageInit({
+            pages: row_count,
+            currentPage: curr_page,
+            element: '.lang_page',
+            callback: function(page) {
+                search_lang(page-1);
+            }
+        });
+    }
+
+    function search_lang(pageNum, func){
+        linkTo("lang", {
+            favoritesId: "A" == lang_favor_type ? null : getCache("lang_favor_id"),
+            title: $("#search_lang_details_txt").val(),
+            pageEntity:{
+                pageNumber: pageNum,
+                pageSize: page_size_lang,
+                orderString: now_order_string,
+                orderType: now_order_type
+            }
+        }, "SearchLanguage", function (val) {
+            grid_favor_lang_list.DataSource = val.rows;
+            grid_favor_lang_list.DataBind();
+            if (func){
+                func(parseInt(val.count / page_size_lang) + (val.count % page_size_lang > 0 ? 1 : 0));
+            }
+        });
+    }
+
+    search_lang(0, init_page);
+
+
+
+</script>

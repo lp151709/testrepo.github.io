@@ -1,0 +1,86 @@
+<div class="mod_tlt blue02"><i class="iconfont iconnews"></i>我的消息</div>
+<div>
+    <ul id="message_search_more">
+        <li style="border-bottom: 1px solid #dadada;">
+            <div style="padding: 10px;">
+                <div>
+                    <a href="javascript:void(0)" style="color: #666" data-reveal-id="pop_message_confirm" data-animation="fade" name="message_read_btn">
+                        <div style="width:90%; overflow: hidden; text-overflow:ellipsis; white-space: nowrap;" bind="{Name:'context', BindType:'innerText'}"></div>
+                    </a>
+                </div>
+                <div style="text-align: right; width: 100%; padding-top: 20px;">
+                    <span style="color: #666" bind="{Name:'messageDateStr', BindType:'innerText'}"></span>
+                    <span class="c_blue" bind="{Name:'statusStr', BindType:'innerText'}"></span>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<div style="text-align: center;padding-top: 30px;">
+    <div class="my-page message_page"></div>
+</div>
+<div id="pop_message_confirm" class="reveal-modal" style="color: #666">
+    <p bind="{Name:'context', BindType:'innerText'}"></p>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<script type="text/javascript">
+
+    var page_size = 10;
+
+    function init_page(row_count){
+        myPageInit({
+            pages: row_count,
+            currentPage: 1,
+            element: '.message_page',
+            callback: function(page) {
+                search_message(page-1);
+            }
+        });
+    }
+
+    var grid_message_more = $("#message_search_more").ListGrid();
+    grid_message_more.AddIndex = true;
+    grid_message_more.PreBindRow = function (data){
+        // data.contextStr = longString(data.context, 50);
+        data.messageDateStr = Global.GetFormatDate(data.messageDate, "yyyy-MM-dd");
+        data.statusStr = "Y" == data.readStatus ? "已读" : "未读";
+    }
+
+    grid_message_more.AfterBindRow = function (row, data){
+        $('a[data-reveal-id]', row).on('click', function(e) {
+            var itemDocRowItem = grid_message_more.FindRowItemByObject(this);
+            e.preventDefault();
+            var modalLocation = $(this).attr('data-reveal-id');
+            $('#'+modalLocation).reveal($(this).data());
+            $("#pop_message_confirm").DataBind(itemDocRowItem.Value.Data);
+            if ("Y" != itemDocRowItem.Value.Data.readStatus){
+                linkTo("message", {
+                    id: itemDocRowItem.Value.Data.id
+                }, "MessageRead", function (val) {
+                    search_message(0, init_page);
+                });
+            }
+        });
+    }
+
+    grid_message_more.Init();
+
+    function search_message(pageNum, func){
+        linkTo("message", {
+            pageEntity:{
+                pageNumber: pageNum,
+                pageSize: page_size
+            }
+        }, "SearchMessage", function (val) {
+            grid_message_more.DataSource = val.rows;
+            grid_message_more.DataBind();
+            if (func){
+                var page_val = parseInt(val.count / page_size) + (val.count % page_size > 0 ? 1 : 0)
+                func(page_val);
+            }
+        });
+    }
+
+    search_message(0, init_page);
+
+</script>

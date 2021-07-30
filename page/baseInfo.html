@@ -1,0 +1,192 @@
+<script src="js/wordcloud2.js"></script>
+<div class="module01">
+    <div class="mod_tlt"><i class="iconfont iconhot"></i>检索热词</div>
+    <div class="nav_div01" style="width: 100%; height: 100%; overflow: hidden;">
+        <canvas id="hot_search" width="500px" height="200px"></canvas>
+<!--        <ul id="hot_search" style="height: 100%; width: 100%;">-->
+<!--            <li>-->
+<!--                <a href="#">-->
+<!--                    <div bind="{Name:'contextStyle', BindType:'style'}">-->
+<!--                        <span bind="{Name:'context', BindType:'innerText'}"></span>-->
+<!--                    </div>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+    </div>
+</div>
+<div class="module01 module02">
+    <div class="mod_tlt yellow"><i class="iconfont iconhistory"></i>检索历史 <a href="javascript:void(0)" name="mu_info_more" goto="timeLineInfo">更多 &gt;</a></div>
+    <ul class="mod_list" id="history_search">
+        <li>
+            <a href="#">
+                <span bind="{Name:'dayName', BindType:'innerHTML'}"></span>
+                <a bind="{Name:'uri', BindType:'href'}" target="_blank"><span bind="{Name:'contextStr', BindType:'innerText'}"></span></a>
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="module01 module03">
+    <div class="mod_tlt blue"><i class="iconfont iconcollect"></i>我的收藏<a href="javascript:void(0)" name="mu_info_more" goto="favoritesInfo">更多 &gt;</a></div>
+    <ul class="mod_list02" id="collect_search">
+        <li>
+            <a href="#">
+                <span bind="{Name:'title', BindType:'innerText'}"></span>
+                <p>
+                    <span>收藏时间：</span><span bind="{Name:'createDateStr', BindType:'innerText'}"></span>
+                </p>
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="module01 module04">
+    <div class="mod_tlt blue02"><i class="iconfont iconnews"></i>我的消息<a href="javascript:void(0)" name="mu_info_more" goto="message">更多 &gt;</a></div>
+    <ul class="mod_list" id="message_search">
+        <li>
+            <a href="#">
+                <div bind="{Name:'context', BindType:'innerText'}" style="width: 70%; overflow: hidden; text-overflow:ellipsis; white-space: nowrap; float: left;"></div>
+                <div>
+                    <span bind="{Name:'messageDateStr', BindType:'innerText'}"></span>
+                    <span class="c_blue" bind="{Name:'statusStr', BindType:'innerText'}"></span>
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
+<script>
+    var nowNum = 0;
+    var cloudWordVal = [];
+    var wordCloudSize = 20;
+    //hot
+    // var grid_hot = $("#hot_search").ListGrid();
+    // grid_hot.AddIndex = true;
+    // grid_hot.PreBindRow = function (data){
+    //     var wg = 0;
+    //     var sg = 0;
+    //     if (data.context.length > 2){
+    //         if (randomNum(0, 1) > 0){
+    //             sg = 0;
+    //             wg = 20
+    //         } else {
+    //             sg = 160;
+    //             wg = 180;
+    //         }
+    //     } else {
+    //         sg = 0;
+    //         wg = 180;
+    //     }
+    //     var rgb = Global.StringFormat("rgb({0},{1},{2})", [randomNum(0, 255).toString(), randomNum(0, 255).toString(), randomNum(0, 255).toString()]);
+    //     var color = RGB2HEX(rgb);
+    //     data.contextStyle = Global.StringFormat("transform:rotate({0}deg); color: {1};font-size: {2}px;", [randomNum(sg, wg).toString(), color, randomNum(15, 35).toString()])
+    // }
+    //
+    // grid_hot.Init();
+
+    // history
+    var grid_history = $("#history_search").ListGrid();
+    grid_history.AddIndex = true;
+    grid_history.PreBindRow = function (data){
+        let dt = new Date(data.searchDate);
+        let now_dt = new Date();
+        if (checkDate(dt, now_dt)){
+            data.dayName = Global.StringFormat("今天&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{0}", [Global.GetFormatDate(data.logDate, "hh:mm")]);
+        } else {
+            data.dayName = Global.GetFormatDate(data.logDate, "yyyy-MM-dd hh:mm");
+        }
+        data.uri = Global.StringFormat("{0}?historyParams={1}", [data.url, encodeURIComponent(data.params)]);
+        data.contextStr = longString(data.context, 15);
+    }
+    grid_history.Init();
+
+    // collect
+    var grid_collect = $("#collect_search").ListGrid();
+    grid_collect.AddIndex = true;
+    grid_collect.PreBindRow = function (data){
+        data.createDateStr = Global.GetFormatDate(data.createTime, "yyyy-MM-dd");
+    }
+    grid_collect.Init();
+
+    // message
+    var grid_message = $("#message_search").ListGrid();
+    grid_message.AddIndex = true;
+    grid_message.PreBindRow = function (data){
+        // data.contextVal = data.context.length > 18 ? data.context.substr(0, 18) + "..." : data.context;
+        data.messageDateStr = Global.GetFormatDate(data.messageDate, "yyyy-MM-dd");
+        data.statusStr = "Y" == data.readStatus ? "已读" : "未读";
+    }
+    grid_message.Init();
+
+    linkTo("info", {}, "SearchTopInfo", function (val) {
+
+        // grid_hot.DataSource = val.hot;
+        // grid_hot.DataBind();
+        val.hotValue=$.grep(val.hotValue,(n,i)=>n.word.indexOf(".0")==-1);
+        // cloudWordVal = val.hotValue;
+        calcSize(val.hotValue);
+        createCloudWord();
+
+        grid_history.DataSource = val.history;
+        grid_history.DataBind();
+
+        grid_collect.DataSource = val.myFavor;
+        grid_collect.DataBind();
+
+        grid_message.DataSource = val.message;
+        grid_message.DataBind();
+    });
+
+
+    $("[name='mu_info_more']").click(function () {
+        let page_name = $(this).attr("goto");
+        gotoPage(page_name);
+    });
+
+    function calcSize(l) {
+        let cnt_all = 0;
+        let max = 0;
+        cloudWordVal = [];
+        $.each(l, function (i, it) {
+            let v =  parseInt(it.searchCount);
+            max = v > max ? v : max;
+            // cnt_all += v;
+        });
+
+        $.each(l, function (i, it) {
+            let v = parseInt(it.searchCount);
+            let c = v + (max - v) / 4
+            cnt_all += c;
+            it.searchCount = c;
+            // list.push([it.word, c / cnt_all]);
+        });
+
+        $.each(l, function (i, it) {
+            cloudWordVal.push([it.word, it.searchCount / cnt_all * 100]);
+        });
+    }
+
+    function createCloudWord(){
+        let options = eval({
+            "list": cloudWordVal,
+            "miniSize": 3,
+            "gridSize": 20, // size of the grid in pixels
+            "weightFactor": 3, // number to multiply for size of each word in the list
+            "fontWeight": 'normal', // 'normal', 'bold' or a callback
+            "fontFamily": 'Times, serif', // font to use
+            "color": 'random-light', // 'random-dark' or 'random-light'
+            "backgroundColor": "transparent", // the color of canvas
+            "rotateRatio": 1, // probability for the word to rotate. 1 means always rotate
+            "click": function (a1, a2, a3) {
+                // debugger
+            }
+        });
+
+        let hot_search_div = document.getElementById('hot_search');
+        //调用WordCloud
+        WordCloud(hot_search_div, options);
+    }
+
+    window.onresize = function (e) {
+        // debugger
+        createCloudWord();
+    }
+
+</script>

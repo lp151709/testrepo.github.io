@@ -1,0 +1,92 @@
+<div class="mod_tlt blue02">
+    <span style="font-size: 32px;padding-left: 10px;" id="collect_title"></span>
+    <img id="collectBackBtn" src="img/back2.png" style="width: 20px;height: 20px; float: right" />
+<!--    <img src="img/zhuanyi1.png" style="width: 25px;height: 25px; float: right; padding-right: 10px;" />-->
+</div>
+<div class="coll_list">
+    <ul id="collect_list_div">
+        <li>
+<!--            <div style="width: 90%; text-align: right;">-->
+<!--                <input type="checkbox" style="zoom: 200%;" bind="{Name:'chkValue'}" selectvalue="{Yes:'Y', No: 'N'}" />-->
+<!--            </div>-->
+            <div>
+                <a name="collectNextBtn">
+                    <a bind="{Name:'pageUrl', BindType:'href'}" target="_blank">
+                        <img bind="{Name:'imageUrl', BindType:'src'}" onerror="javascript:this.src='img/none1.png';" style="padding-bottom: 15px; width: 120px;" />
+                        <p bind="{Name:'titleStr', BindType:'innerText'}"></p>
+                    </a>
+                    <button class="rename_btn dele_btn" name="delFavorCollectBtn">删除</button>
+                    <button class="rename_btn" name="transFavorCollectBtn">转移</button>
+                </a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div id="pop_collect_delete_confirm" class="reveal-modal" style="color: #666">
+    <h1><span style="font-size: 20px; font-weight: bold;">确认删除</span></h1>
+    <br />
+    <p>是否确认将收藏数据删除？</p>
+
+    <input type="hidden" bind="{Name:'id'}" />
+    <button class="rename_btn" id="delete_collect_pop_btn" style="display: initial">确认</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<script type="text/javascript">
+
+    var grid_collect = $("#collect_list_div").ListGrid();
+    grid_collect.AddIndex = true;
+
+    $("#collect_title").text(getCache("favorites_name"));
+
+    grid_collect.PreBindRow = function (data){
+        data.imageUrl = data.image ? data.image : "img/file1.png";
+        data.titleStr = longString(data.title, 8);
+    }
+
+    grid_collect.AfterBindRow = function (row, data){
+        $("[name='delFavorCollectBtn']", row).click(function () {
+            let itemDocRowItem = grid_collect.FindRowItemByObject(this);
+            $('#pop_collect_delete_confirm').reveal({
+                "data-reveal-id": "pop_edit",
+                "data-animation": "fade"
+            });
+            $("#pop_collect_delete_confirm").DataBind(itemDocRowItem.Value.Data);
+        });
+
+        $("[name='transFavorCollectBtn']", row).click(function () {
+            let itemDocRowItem = grid_collect.FindRowItemByObject(this);
+            setCache("transfer_id", itemDocRowItem.Value.Data.id);
+            gotoPage("transferInfo2");
+        });
+    }
+
+    grid_collect.Init();
+
+
+    $("#collectBackBtn").click(function () {
+        gotoPage("favoritesInfo");
+    });
+
+    $("#delete_collect_pop_btn").click(function () {
+        $('#pop_collect_delete_confirm').trigger('reveal:close');
+        let del_val = $("#pop_collect_delete_confirm").GetData();
+        linkTo("favor", {
+            id: del_val.id,
+            handle: "D"
+        }, "CollectHandle", function (val) {
+            search_collect();
+        });
+    });
+
+    function search_collect() {
+        linkTo("favor", {
+            favoritesId: getCache("favorites_id")
+        }, "SearchFavoritesCollect", function (val) {
+            grid_collect.DataSource = val;
+            grid_collect.DataBind();
+        });
+    }
+
+    search_collect();
+
+</script>

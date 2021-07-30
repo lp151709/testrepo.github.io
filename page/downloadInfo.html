@@ -1,0 +1,204 @@
+<div>
+    <div style="width: 70%; float: left;">
+        <div>
+            <table style="color: #666; width: 100%;" id="tb_favor_download_div">
+                <thead>
+                <tr style="vertical-align: top">
+                    <td>
+                        <div style="padding-left: 10px; width: 20%; float: left">已选（<span id="check_select_count">0</span>）
+                            <a href="javascript:void(0)" id="faver_download_del_btn" style="color: #666" class="button_del"><div><img src="img/del3.png" style="width: 13px; height: 13px;display: inline-block;" /></div></a>
+                        </div>
+                        <!--                        <div style="float: right">-->
+                        <!--                            <a href="javascript:void(0)" id="pre_download_btn" class="button_del"><img src="img/syy1.png" style="width: 15px; height: 15px;" /></a>-->
+                        <!--                            <a href="javascript:void(0)" id="next_download_btn" class="button_del"><img src="img/xyy1.png" style="width: 15px; height: 15px;" /></a>-->
+                        <!--                        </div>-->
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td style="padding-bottom: 10px;">
+                        <div style="background-color: #e7f6fe;padding-left: 10px;"><span style="font-weight: bold;" bind="{Name:'dayName', BindType:'innerText'}"></span></div>
+                        <div style="line-height: 30px;padding-left: 10px;">[<a bind="{Name:'showUri', BindType:'href'}" target="_blank"><span bind="{Name:'showName', BindType:'innerText'}"></span></a>] <a href="#" style="color: #237aa7"><span bind="{Name:'title', BindType:'innerText'}"></span></a></div>
+                        <div style="line-height: 30px;padding-left: 10px;" bind="{Name:'content', BindType:'innerText'}"></div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align: center;padding-top: 30px;">
+            <div class="my-page favor_download_page"></div>
+        </div>
+    </div>
+    <div class="module01 module03" style="width: 25%; float: right;color: #666; padding-left: 10px; height: auto;">
+        <div style="padding-bottom: 30px;">
+            <div class="mod_tlt blue">来源数据库</div>
+            <div style="padding-top: 10px;">
+                <ul id="ul_source_download">
+                    <li>
+                        <a href="javascript:void(0)" style="color: #666" name="source_btn"><span bind="{Name:'name', BindType:'innerText'}"></span><span bind="{Name:'countStr', BindType:'innerText'}"></span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div style="padding-bottom: 30px;">
+            <div class="mod_tlt blue">资源类型</div>
+            <div style="padding-top: 10px;">
+                <ul id="ul_agg_download" style="color: #666">
+                    <li>
+                        <a href="javascript:void(0)" style="color: #666" name="agg_btn"><span bind="{Name:'name', BindType:'innerText'}"></span><span bind="{Name:'countStr', BindType:'innerText'}"></span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="application/javascript">
+    var new_page_dl = 0;
+    var size_page_dl = 10;
+    var current_source = null;
+    var current_agg = null;
+
+    $("#faver_download_del_btn").click(function () {
+        var select_items = grid_favor_download.GetCheckBoxSelectList(true);
+        var dels = [];
+        $.each(select_items, function (index, item) {
+            dels.push(item.code);
+        });
+
+        linkTo("favor", dels, "DeleteResource", function () {
+        });
+    });
+
+    function init_page(row_count){
+        myPageInit({
+            pages: row_count,
+            currentPage: 1,
+            element: '.favor_download_page',
+            callback: function(page) {
+                new_page_dl = page - 1;
+                init_favor_download();
+            }
+        });
+    }
+
+    var grid_favor_download = $("#tb_favor_download_div").Grid();
+    grid_favor_download.ShowChecked = true;
+    grid_favor_download.AddIndex = true;
+    grid_favor_download.CheckBoxContentStyle = {
+        "width": "20px",
+        "min-width": "20px",
+        "vertical-align": "top"
+    }
+
+    grid_favor_download.ClickAllCheckBoxAfter = function(item){
+        var select_items = grid_favor_download.GetCheckBoxSelectList(true);
+        $("#check_select_count").text(select_items ? select_items.length : 0);
+    }
+
+    grid_favor_download.PreBindRow = function (data){
+        var dt = new Date(data.releaseDate);
+        var now_dt = new Date();
+        if (checkDate(dt, now_dt)){
+            data.dayName = "今天";
+        } else {
+            data.dayName = Global.GetFormatDate(data.releaseDate, "yyyy-MM-dd");
+        }
+
+        data.showName = data.source ? data.source.name : "未分类";
+        data.showUri = data.source ? data.source.id : "javascript:void(0)";
+    }
+
+    grid_favor_download.ClickCheckBoxAfter = function(item){
+        var select_items = grid_favor_download.GetCheckBoxSelectList(true);
+        $("#check_select_count").text(select_items ? select_items.length : 0);
+    }
+
+    grid_favor_download.Init();
+
+
+    var grid_source_download = $("#ul_source_download").ListGrid();
+    grid_source_download.AddIndex = true;
+
+    grid_source_download.AfterBindRow = function (row, data){
+        $("[name='source_btn']", row).click(function () {
+            var itemDocRowItem = grid_source_download.FindRowItemByObject(this);
+            current_source = itemDocRowItem.Value.Data.id;
+            init_favor_download(init_page);
+            searchStat();
+        });
+    }
+
+    grid_source_download.PreBindRow = function (data){
+        data.countStr = data.count > 0 ? Global.StringFormat("（{0}）", [data.count.toString()]) : "";
+    }
+
+    grid_source_download.Init();
+
+    var grid_agg_download = $("#ul_agg_download").ListGrid();
+    grid_agg_download.AddIndex = true;
+
+    grid_agg_download.AfterBindRow = function (row, data){
+        $("[name='agg_btn']", row).click(function () {
+            var itemDocRowItem = grid_agg_download.FindRowItemByObject(this);
+            current_agg = itemDocRowItem.Value.Data.id;
+            init_favor_download(init_page);
+            searchStat();
+        });
+    }
+
+    grid_agg_download.PreBindRow = function (data){
+        data.countStr = data.count > 0 ? Global.StringFormat("（{0}）", [data.count.toString()]) : "";
+    }
+
+    grid_agg_download.Init();
+
+    function init_favor_download(func){
+        var query = {
+            sourceTypeId: current_source,
+            dataTypeId: current_agg,
+            releaseType: "D",
+            pageEntity: {
+                pageNumber: new_page_dl,
+                pageSize: size_page_dl
+            }
+        }
+
+        linkTo("favor", query, "SearchPageResource", function (val) {
+            grid_favor_download.DataSource = val.rows;
+            grid_favor_download.DataBind();
+            if (func){
+                var page_val = parseInt(val.count / size_page_dl) + (val.count % size_page_dl > 0 ? 1 : 0)
+                func(page_val);
+            }
+        });
+    }
+
+    function searchStat(){
+        linkTo("favor", {
+            releaseType: "D",
+            dataTypeId: current_agg,
+            sourceTypeId: current_source
+        }, "ResourceStat", function (val) {
+            val.sourceStat.unshift({
+                name: "全部",
+                id: null,
+                count: 0
+            });
+            grid_source_download.DataSource = val.sourceStat;
+            grid_source_download.DataBind();
+
+            val.aggStat.unshift({
+                name: "全部",
+                id: null,
+                count: 0
+            });
+            grid_agg_download.DataSource = val.aggStat;
+            grid_agg_download.DataBind();
+        });
+    }
+
+    init_favor_download(init_page);
+    searchStat();
+
+</script>

@@ -1,0 +1,121 @@
+<link rel="stylesheet" href="css/timeline.css" />
+<div style="width: 100%;">
+    <div style="color: black; font-size: 10px; float: left; width: 60%" id="avg_conut_div">
+        <img src="img/fdj.png" style="width: 13px; height: 13px; margin-right: 5px; margin-left: 10px;padding-left: 20px;" /><span>近 <span bind="{Name:'day', BindType:'innerText'}" style="color: black;"></span> 天累计检索 <span style="color: blue" bind="{Name:'countStr', BindType:'innerText'}"></span> 次</span>
+        <img src="img/user1.png" style="width: 13px; height: 13px; margin-right: 5px; margin-left: 10px;padding-left: 20px;" /><span>高于 <span style="color: red" bind="{Name:'rank', BindType:'innerText'}" ></span> 用户</span>
+        <img src="img/avg1.png" style="width: 13px; height: 13px; margin-right: 5px; margin-left: 10px;padding-left: 20px;" /><span>用户平均日检索 <span style="color: green" bind="{Name:'dayAvg', BindType:'innerText'}"></span> 次</span>
+    </div>
+    <div>
+        <button class="common_btn" name="day_select_btn" value="7">周</button>
+        <button class="common_btn btn01" name="day_select_btn" value="30">月</button>
+    </div>
+</div>
+<div id="echarts_container" style="height: 300px; width: 950px;"></div>
+<div class="module01 scrllbar01" style="width: 80%; height: 300px;overflow-y: auto;" id="time_line_content_div">
+    <div class="container" style="font-size: medium; float: left;">
+        <ul id="time_line_div" style="line-height: 2">
+            <li>
+                <div class="timeline-item" bind="{Name:'dayName', BindType:'date-is'}">
+                    <ul name="inner_timeline_div">
+                        <li style="font-size: 15px;">
+                            <input type="checkbox" bind="{Name:'id'}" name="ck_timeline_btn"/>
+                            <span style="margin-left: 10px;" bind="{Name:'timeStr', BindType:'innerText'}"></span>
+                            <span style="margin-left: 10px;">搜索：</span>
+                            <a bind="{Name:'uri', BindType:'href'}" target="_blank"><span style="margin-left: 10px; color: #0ab3d5;" bind="{Name:'context', BindType:'innerText'}"></span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div style="float: right; height: 300px; vertical-align: middle;">
+    <div>
+        <button class="common_btn" id="delTimelineBtn">删除所选项</button>
+    </div>
+    <div>
+        <button class="common_btn dele_btn" id="clearTimelineBtn">清空所选项</button>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var search_day_len = 7;
+
+    $("[name='day_select_btn']").click(function () {
+        search_day_len = parseInt($(this).val());
+        $.each($("[name='day_select_btn']"), function (i ,it) {
+            $(it).addClass("btn01");
+        });
+
+        $(this).removeClass("btn01");
+        history_stat_search();
+        search_charts_value();
+    });
+
+    var grid_timeline = $("#time_line_div").ListGrid();
+    grid_timeline.AddIndex = true;
+
+    grid_timeline.AfterBindRow = function (row, data){
+        let grid_inner_time = $("[name='inner_timeline_div']", row).ListGrid();
+        grid_inner_time.AddIndex = true;
+        grid_inner_time.PreBindRow = function (data_val){
+            data_val.timeStr = Global.GetFormatDate(data_val.searchDate, "hh:mm");
+            data_val.uri = Global.StringFormat("{0}?historyParams={1}", [data_val.url, encodeURIComponent(data_val.params)]);
+        }
+        grid_inner_time.Init();
+        grid_inner_time.DataSource = data.dayData;
+        grid_inner_time.DataBind();
+    }
+
+    $("#delTimelineBtn").click(function () {
+        let select_list = [];
+        $.each($("[name='ck_timeline_btn']", $("#time_line_content_div")), function (i, it) {
+            if (it.checked){
+                select_list.push($(it).val());
+            }
+        });
+
+        linkTo("log", select_list, "DeleteLogHistory", function (val) {
+            gotoPage("timeLineInfo");
+        });
+    });
+
+    $("#clearTimelineBtn").click(function () {
+        $.each($("[name='ck_timeline_btn']", $("#time_line_content_div")), function (i, it) {
+            it.checked = false;
+        });
+    });
+
+    grid_timeline.Init();
+
+    linkTo("log", {
+        pageEntity: {
+            pageNumber: 0,
+            pageSize: 100
+        }
+    }, "SearchLogTime", function (val) {
+        let list = [];
+        for (let key in val.timeline){
+            list.push({
+               dayName: key,
+               dayData:  val.timeline[key]
+            });
+        }
+        grid_timeline.DataSource = list;
+        grid_timeline.DataBind();
+    });
+
+    function history_stat_search(){
+        linkTo("history", {
+            day: search_day_len * -1
+        }, "SearchCommHistoryStatistics", function (val) {
+            val.countStr = Global.IsNull(val.count) ? "0" : val.count + "";
+            val.dayAvg = Global.IsNull(val.dayAvg) ? "0" : val.dayAvg;
+            $("#avg_conut_div").DataBind(val);
+        });
+    }
+
+    history_stat_search();
+
+</script>
+<script src="js/showcharts.js"></script>

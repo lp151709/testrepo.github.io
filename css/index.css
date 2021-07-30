@@ -1,0 +1,505 @@
+@font-face {
+  font-family: 思源黑体;
+  src: url('../font/SourceHanSansSC/SourceHanSansSC-Normal.otf')
+}
+
+html body {
+  font-size: 16px;
+  font-family: "思源黑体";
+  /*color: #FFFFFF;*/
+  background: #e3e3e3;
+  padding-bottom: 40px;
+}
+i {
+  color: #FFFFFF;
+  font-size: 12px;
+}
+a {
+  text-decoration: none;
+  /*color: #FFFFFF;*/
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+ul {
+  list-style: none;
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+
+button {
+  outline: none;
+}
+
+/*清除浮动*/
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
+}
+.clearfix {
+  *zoom: 1;
+  /*IE/7/6*/
+}
+/*定位居中*/
+.middle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.s-side{
+  color: #7ba0b3;
+  background: #fff;
+  border-radius: 20px 0 0 20px;
+  width: 340px;
+  box-sizing: border-box;
+  padding: 20px 0;
+  min-height: 712px;
+}
+.d-firstNav{
+  background: #ebf1f4;
+  width: 260px;
+  height: 40px;
+  border-radius: 40px;
+  margin:0 30px;
+}
+.s-side .s-firstItem i {
+  font-size: 20px;
+}
+.s-side .s-firstItem span {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 20px;
+  white-space: 10px;
+  color: #1473a5;
+  font-weight: bold;
+}
+.s-side .first {
+  padding: 0px;
+  margin-bottom: 20px;
+}
+.s-side .d-firstNav span {
+  display: inline-block;
+  margin-left: 10px;
+}
+.s-side .d-firstNav i.fr {
+  font-size: 12px;
+  margin-top: 2px;
+}
+.s-side .s-secondNav,
+.s-side .s-secondItem {
+  margin-left: 50px;
+  margin-top: 10px;
+}
+.d-firstNav:hover, .first .active{
+  background-color: #237aa7;
+  cursor: pointer;
+  color: #fff;
+}
+.d-firstNav:hover i, .first .active i{
+  color: #fff;
+}
+.s-secondNav:hover{
+color: #237aa7;
+cursor: pointer;
+}
+.s-side .d-secondDrop {
+  margin-left: 100px;
+  margin-top: 10px;
+}
+.iconRotate {
+  transform: rotate(90deg);
+  transition: transform 0.5s;
+}
+.s-firstDrop,
+.s-secondDrop {
+  display: none;
+  margin-bottom: 20px;
+}
+.s-firstItem{
+  margin:0 0 30px 30px;
+}
+.s-firstItem i{
+  color: #1473a5;
+}
+
+.wrapper{
+  width: 80%;
+  min-width: 1300px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+.top{
+  padding: 25px 0;
+  height: 76px;
+}
+.srh_box{
+  position: relative;
+  margin-top: 10px;
+}
+.srh_inp{
+  width: 500px;
+  height: 40px;
+  border: 1px solid #a0a0a0;
+  border-radius: 40px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+.srh_btn{
+  position: absolute;
+  right: 20px;
+  top: 6px;
+}
+.srh_btn i{
+  font-size: 24px;
+  margin-top: 5px;
+  color: #aeaeae;
+}
+.user{
+  margin-left: 40px;
+}
+.user img{
+  border-radius: 55px;
+  border: 1px solid #deaf68;
+  width: 55px;
+}
+a.exit{
+  color: #32557d;
+  line-height: 55px;
+  margin-left: 10px;
+}
+.main_con{
+  background: #f8f8f8;
+  border-radius: 20px;
+}
+.d-firstNav {
+  line-height: 37px;
+  padding-right:20px ;
+}
+.d-firstNav i{
+  font-size: 24px;
+  color: #7ba0b3;
+  margin-left: 20px;
+}
+
+.main_right{
+  width:-webkit-calc(100% - 340px); 
+  width:-moz-calc(100% - 340px); 
+  width:calc(100% - 340px); 
+  padding: 50px 35px 0;
+  box-sizing: border-box;
+}
+.module01{
+  background: #fff;
+  box-shadow: 3px 0 15px rgba(36, 70, 109, 0.25);
+  width: 55%;
+  border-radius: 10px;
+  padding: 12px 18px;
+  box-sizing: border-box;
+  height: 300px;
+  float: left;
+  margin: 0 15px 30px;
+}
+.mod_tlt{
+  color: #1473a5;
+  font-size: 18px;
+  padding: 15px 0 10px 0;
+  border-bottom: 2px solid #1473a5;
+}
+.mod_tlt i{
+  color: #1473a5;
+  font-size: 24px;
+  margin-right: 6px;
+}
+.module02{
+  width:-webkit-calc(45% - 60px); 
+  width:-moz-calc(45% - 60px); 
+  width:calc(45% - 60px); 
+}
+.yellow, .yellow i{
+  color: #deaf68;
+}
+.yellow{
+  border-bottom: 2px solid #deaf68;
+}
+.yellow a{
+  color: #deaf68;
+  float: right;
+  font-size: 18px;
+}
+.mod_list li {
+  height: 52px;
+  line-height: 52px;
+  border-bottom: 1px solid #dadada;
+}
+.mod_list li a{
+  color: #666;
+  font-size: 15px;
+}
+
+.mod_list09 li {
+  height: 52px;
+  line-height: 52px;
+  border-bottom: 1px solid #dadada;
+}
+.mod_list09 li a{
+  font-size: 15px;
+}
+
+.module03{
+  width: 40%;
+  height: 280px;
+}
+.blue, .blue i{
+  color: #7ba0b3;
+}
+.blue{
+  border-bottom: 2px solid #7ba0b3;
+}
+.blue a{
+  color: #7ba0b3;
+  float: right;
+  font-size: 18px;
+}
+.blue02, .blue02 i{
+  color: #1473a5;
+}
+.blue02{
+  border-bottom: 2px solid #1473a5;
+}
+.blue02 a{
+  color: #1473a5;
+  float: right;
+  font-size: 18px;
+}
+.mod_list02 li{
+  line-height: 32px;
+  padding: 21px 0;
+  border-bottom: 1px solid #dadada;
+  color: #666;
+}
+.mod_list02 li a{
+  color: #666;
+  font-size: 15px;
+}
+.mod_list02 li p{
+  font-size: 15px;
+}
+
+.module04{
+  width:-webkit-calc(60% - 60px); 
+  width:-moz-calc(60% - 60px); 
+  width:calc(60% - 60px); 
+  height: 280px;
+}
+.c_blue{
+  color: #00b2d4;
+}
+
+ /* 我的资料 */
+ .data_bg{
+   background: url(../img/bg_vein.png) center center no-repeat;
+   background-size: 90%;
+   height: 712px;
+ }
+ .data_card{
+  width: 534px;
+  margin: 87px auto 0;
+  text-align: center;
+  position: relative;
+  box-shadow: 3px 0 15px rgba(36, 70, 109, 0.25);
+  border-radius: 0 0 10px 10px;
+  background:#fff;
+ }
+ .card_img{
+   position: absolute;
+   top: -85px;
+   left: 50%;
+   margin-left: -83px;
+ }
+ .card_img img{
+   border-radius: 50%;
+   width: 166px;
+ }
+ .user_name{
+  background:#1473a5;
+  border-radius: 10px 10px 0 0;
+  padding: 125px 0 32px;
+  font-size: 20px;
+}
+.user_name h1{
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+.card_list li{
+  font-size: 20px;
+  height: 50px;
+  line-height: 50px;
+  color: #1473a5;
+}
+.card_list li:nth-child(2n+1){
+background:#ebf1f4;
+color: #999;
+}
+
+
+/* 我的收藏 */
+.coll_list li{
+  float: left;
+  width: 32%;
+  text-align: center;
+  padding: 40px 0;
+  min-height: 260px;
+  margin-bottom:20px ;
+}
+.coll_list li img{
+  width: 170px;
+}
+.coll_list li input{
+  border: 0;
+  font-size: 20px;
+  background-color: transparent;
+  color: #1473a5;
+  font-weight: bold;
+  text-align: center;
+}
+
+.coll_list li p{
+  font-size: 20px;
+  color: #1473a5;
+}
+
+.coll_list li:hover{
+  background: #fff;
+  border-radius: 10px;
+  padding: 40px 0;
+  cursor: default
+}
+.rename_btn{
+  width: 110px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 10px;
+  display: inline-block;
+  background: #1473a5;
+  margin: 30px 10px 0;
+  border: none;
+  display: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.common_btn{
+  width: 110px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 10px;
+  display: inline-block;
+  background: #1473a5;
+  margin: 30px 10px 0;
+  border: none;
+  /*display: none;*/
+  color: #fff;
+  cursor: pointer;
+}
+
+.dele_btn{
+  background: #deaf68;
+}
+.coll_list li:hover .rename_btn{
+  display: inline-block;
+}
+
+.nav_div {
+  width: 50%;
+  border: 0px solid black;
+  height: auto;
+}
+.nav_div ul li{
+  float: left;
+  list-style-type: none;
+}
+.nav_div ul li a{
+  /*background-color: black;*/
+  color: white;
+  margin: 5px;
+  margin: 3px;
+}
+
+.nav_div01 {
+  width: 50%;
+  border: 0px solid black;
+  height: auto;
+}
+.nav_div01 ul li{
+  float: left;
+  list-style-type: none;
+}
+.nav_div01 ul li a{
+  /*background-color: black;*/
+  margin: 5px;
+  margin: 3px;
+}
+
+.scrllbar01::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width : 7px;  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+}
+
+.scrllbar01::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background   : #1473a5;
+}
+.scrllbar01::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background   : #ededed;
+}
+
+.btn01 {
+  background: #FFFFFF;
+  color: black;
+}
+
+/*.sortable-drag {*/
+/*  background: #daf4ff;*/
+/*}*/
+
+/*.sortable-ghost {*/
+/*  opacity: .2;*/
+/*}*/
+
+
+/*div {*/
+/*  width: 200px;*/
+/*  height: 200px;*/
+/*  background: #272727;*/
+/*  border: 1px #272727 solid;*/
+/*}*/
+
+.table20 {
+  border-radius: 6px;
+  box-shadow: inset 0px 1px 1px 1px #666;
+  border: 1px #666 solid;
+  border-left: 1px #131313 solid;
+  border-top: 1px #131313 solid;
+  overflow: auto;
+}

@@ -1,0 +1,138 @@
+.table14_1 table {
+    width:100%;
+    margin:15px 0;
+    border:0;
+}
+.table14_1 thead td{
+    font-weight:bold;
+    background-color:#e7f6fe;
+    color:#1473a5
+}
+.table14_1,.table14_1 td {
+    font-size:0.95em;
+    text-align:center;
+    padding:4px;
+    border-collapse:collapse;
+}
+.table14_1 td {
+    border: 1px solid #ffffff;
+    border-width:1px
+}
+.table14_1 thead td {
+    border: 1px solid #e7f6fe;
+    border-width:1px 0 1px 0
+}
+.table14_1 td {
+    border: 1px solid #eeeeee;
+    border-width:1px 0 1px 0
+}
+.table14_1 tr {
+    border: 1px solid #ffffff;
+}
+.table14_1 tr:nth-child(odd){
+    background-color:#f7f7f7;
+}
+.table14_1 tr:nth-child(even){
+    background-color:#ffffff;
+}
+
+.tablemove ul li:hover {
+    cursor: hand;
+}
+
+
+/**
+* Checkbox Three
+*/
+
+.checkboxThree {
+    width: 80px;
+    height: 30px;
+    background: #333;
+    margin: 20px 60px;
+    border-radius: 50px;
+    position: relative;
+}
+/**
+* Create the text for the On position
+*/
+
+.checkboxThree:before {
+    content: 'On';
+    position: absolute;
+    top: 12px;
+    left: 13px;
+    height: 2px;
+    color: #26ca28;
+    font-size: 10px;
+}
+/**
+* Create the label for the off position
+*/
+
+.checkboxThree:after {
+    content: 'Off';
+    position: absolute;
+    top: 12px;
+    left: 13px;
+    height: 2px;
+    color: #ddd;
+    font-size: 10px;
+}
+/**
+* Create the pill to click
+*/
+
+.checkboxThree label {
+    display: block;
+    width: 20px;
+    height: 15px;
+    border-radius: 50px;
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -o-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    transition: all .5s ease;
+    cursor: pointer;
+    position: absolute;
+    top: 9px;
+    z-index: 1;
+    left: 12px;
+    background: #ddd;
+}
+/**
+* Create the checkbox event for the label
+* @type {[type]}
+*/
+
+.checkboxThree input[type=checkbox]:checked + label {
+    left: 30px;
+    background: #26ca28;
+}
+
+.tablemove {
+    cursor: pointer;
+}
+
+/*.tablemove2 {*/
+/*    cursor: move; !important;*/
+/*}*/
+
+.tablemove1 {
+    moz-user-select: -moz-none;
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    cursor: move; !important;
+    font-weight: bold;
+}
+
+/*.tableli_1 li:nth-child(odd){*/
+/*    background-color:#EBEBEB;*/
+/*}*/
+/*.tableli_1 li:nth-child(even){*/
+/*    background-color:#E6E6FA;*/
+/*}*/

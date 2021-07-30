@@ -1,0 +1,22 @@
+<div style="height: 100%; width: 100%;" class="data_bg">
+    <div class="data_card" id="user_info_div">
+        <div class="card_img">
+            <img src="img/user-boy.png">
+        </div>
+        <div class="user_name" style="color: white">
+            <h1 bind="{Name:'userId', BindType:'innerText'}"></h1>
+            <span bind="{Name:'roleName', BindType:'innerText'}"></span>
+        </div>
+        <ul class="card_list">
+            <li>邮箱</li>
+            <li bind="{Name:'mail', BindType:'innerText'}"></li>
+            <li>读者卡号</li>
+            <li bind="{Name:'shLibAskNo', BindType:'innerText'}"></li>
+            <li>真实姓名</li>
+            <li bind="{Name:'userName', BindType:'innerText'}"></li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#user_info_div").DataBind(loginInfo);
+</script>

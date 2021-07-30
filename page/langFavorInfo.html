@@ -1,0 +1,140 @@
+<div class="mod_tlt blue02">
+    <span>语料库</span>
+    <a href="javascript:void(0)" id="langAddBtn"><img src="img/add1.png" style="float: right; width: 30px; height: 30px;" /></a>
+</div>
+<div style="padding-top: 20px;">
+    <div class="coll_list scrllbar01" style="overflow-y: auto; height: 550px;">
+        <ul id="favor_lang_div">
+            <li style="min-height: 250px;">
+                <div>
+                    <a href="javascript:void(0)">
+                        <img src="img/file.png" name="favorlangNextBtn" />
+                        <input type="text" bind="{Name:'nameStr'}" readonly="readonly" name="dirNameItem" />
+                        <button class="rename_btn" name="saveLangBtn">保存</button>
+                        <button class="rename_btn dele_btn" name="delLangFavorBtn">删除</button>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="pop_delete_lang_list_confirm" class="reveal-modal" style="color: #666">
+    <h1><span style="font-size: 20px; font-weight: bold;">确认删除</span></h1>
+    <br />
+    <p>是否确认将收藏夹删除？此操作会将此收藏夹下所有内容删除</p>
+
+    <input type="hidden" bind="{Name:'id'}" />
+    <button class="rename_btn" id="delete_lang_list_btn" style="display: initial">确认</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<script type="text/javascript">
+
+    var pub_favor = [{
+        fixed: "A",
+        name: "全部语料库"
+    }, {
+        id: 0,
+        fixed: "P",
+        name: "公共语料库"
+    }];
+
+    var fromType = {"P": "public", "N": "personal", "A": "all"};
+
+    var grid_favor_lang = $("#favor_lang_div").ListGrid();
+    grid_favor_lang.AddIndex = true;
+    grid_favor_lang.PreBindRow = function (data){
+        data.nameStr = longString(data.name, 8);
+    }
+
+    grid_favor_lang.AfterBindRow = function (row, data) {
+
+        if ("A" == data.buttonType) {
+            $("[name='delLangFavorBtn']", row).hide();
+            $("[name='dirNameItem']", row).removeAttr("readonly");
+        } else {
+            $("[name='saveLangBtn']", row).hide();
+            $("[name='delLangFavorBtn']", row).show();
+        }
+
+        if ("N" != data.fixed) {
+            $("[name='delLangFavorBtn']", row).hide();
+        }
+
+        $("[name='favorlangNextBtn']", row).click(function () {
+            let itemDocRowItem = grid_favor_lang.FindRowItemByObject(this);
+            setCache("lang_favor_name", itemDocRowItem.Value.Data.name);
+            setCache("lang_favor_id", itemDocRowItem.Value.Data.id);
+            setCache("lang_favor_type", itemDocRowItem.Value.Data.fixed);
+            setCache("lang_show_type", fromType[itemDocRowItem.Value.Data.fixed]);
+            gotoPage("langDetailsInfo");
+        });
+
+        $("[name='saveLangBtn']", row).click(function () {
+            let itemDocRowItem = grid_favor_lang.FindRowItemByObject(this);
+            let name_item = $("[name='dirNameItem']", itemDocRowItem.Row);
+            linkTo("favor", {
+                name: name_item.val(),
+                favoritesType: "A"
+            }, "CreateFavorites", function () {
+                search_lang();
+            });
+        });
+
+        $("[name='delLangFavorBtn']", row).click(function () {
+            let itemDocRowItem = grid_favor_lang.FindRowItemByObject(this);
+            $('#pop_delete_lang_list_confirm').reveal({
+                "data-reveal-id": "pop_edit",
+                "data-animation": "fade"
+            });
+            $("#pop_delete_lang_list_confirm").DataBind(itemDocRowItem.Value.Data);
+        });
+    }
+
+    grid_favor_lang.Init();
+
+    function search_lang(){
+        linkTo("favor", {
+            favoritesType:"A"
+        }, "SearchFavorites", function (val) {
+            $.each(pub_favor, function (i, it) {
+                val.unshift(it);
+            });
+
+            grid_favor_lang.DataSource = val;
+            grid_favor_lang.DataBind();
+        });
+    }
+
+    $("#langAddBtn").click(function () {
+        grid_favor_lang.InsertRow({
+            name: "未命名",
+            favoritesType: "A",
+            buttonType: "A"
+        });
+    });
+
+    $("#delete_lang_list_btn").click(function () {
+        $('#pop_delete_lang_list_confirm').trigger('reveal:close');
+        let del_val = $("#pop_delete_lang_list_confirm").GetData();
+        linkTo("favor", {
+            favoritesId: del_val.id,
+            handle: "D"
+        }, "FavoritesHandle", function () {
+            // search_lang();
+            delete_lang_items(del_val.id);
+        });
+    });
+
+    function delete_lang_items(favorId) {
+        linkTo("lang", {
+            favoritesId: favorId,
+        }, "DeleteLangByFavor", function () {
+            search_lang();
+        });
+    }
+
+
+    search_lang();
+
+
+</script>
